@@ -1,0 +1,67 @@
+---
+title: "Case_Study_2"
+output: 
+  html_document:
+    keep_md: true
+    author: Brian Treadway
+    date: 1/16/2020
+    toc: true
+    toc_float: true
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(mosaic)
+library(pander)
+library(car)
+library(DT)
+library(ggplot2)
+library(dplyr)
+library(gapminder)
+
+```
+## Background
+
+Well, this was difficult. I thought it was going to be easy after the first one but the second one was rather difficult. With very little experience with ggPlots, I was able to learn about what it takes to put everything together. I definitely got more comfortable putting the pieces together for most of it. Getting the lines and the dots together was something cool, especially adding in the sizes. I do have difficulties still adding the black dots with the right graph. 
+
+
+## Images
+
+Below is the data for Gapminder
+```{r}
+datatable(gapminder)
+gapminder1<- filter(gapminder, country != "Kuwait")
+
+```
+
+```{r}
+ggplot(data = gapminder1)+
+  geom_point(mapping = aes(x = lifeExp, y = gdpPercap, color = continent, size = pop/100000))+
+  facet_wrap(~year, nrow=1)+
+  scale_y_continuous(name = "GDP Per Cap", limits = c(300, 50000),trans = "sqrt")+
+  scale_x_continuous(name = "Life Expectancy", limits = c(20,80))+
+  theme_bw()
+ggsave("plot1.png", width = 15)
+```
+
+```{r}
+gapminder2<- gapminder1 %>% 
+  group_by(continent, year) %>% 
+  mutate(wm= weighted.mean(gdpPercap, pop))
+ggplot(data = gapminder2)+
+  geom_path(mapping = aes(x= year, y = gdpPercap, color = continent))+
+  geom_point(mapping = aes(x = year, y = gdpPercap, color = continent))+
+  geom_path(mapping = aes(x = year, y = wm))+
+  geom_point(mapping = aes(x = year, y = wm, size = pop))+
+  scale_y_continuous(trans = "sqrt")+
+  facet_wrap(~continent, nrow = 1)+
+  theme_bw()
+ggsave("plot2.png", width = 15)
+```
+
+```{r}
+
+```
+
